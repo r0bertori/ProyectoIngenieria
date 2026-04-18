@@ -1,0 +1,433 @@
+// Cosmetic Pipeline - Database Schema
+// PostgreSQL + Prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================
+// ENUMS
+// ============================================
+
+enum OrganizationType {
+  DISTRIBUTOR
+  STORE
+}
+
+enum UserRole {
+  ADMIN
+  OPERATIONS
+  DISTRIBUTOR
+  STORE
+}
+
+enum OrderStatus {
+  DRAFT
+  SUBMITTED
+  CONFIRMED
+  PREPARING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  INCIDENT_REPORTED
+}
+
+enum IncidentType {
+  DAMAGED
+  WRONG_ITEM
+  MISSING_ITEM
+  QUALITY_ISSUE
+  DELIVERY_ISSUE
+  OTHER
+}
+
+enum IncidentStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
+enum NotificationType {
+  ORDER_CREATED
+  ORDER_STATUS_CHANGED
+  INCIDENT_CREATED
+  INCIDENT_RESOLVED
+}
+
+enum IntegrationJobType {
+  CATALOG_IMPORT
+  STOCK_IMPORT
+  ORDER_EXPORT
+}
+
+enum IntegrationJobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+// ============================================
+// ORGANIZATIONS
+// ============================================
+
+model Organization {
+  id         String           @id @default(cuid())
+  name       String
+  type       OrganizationType
+  taxId      String           @unique // CIF/NIF
+  email      String
+  phone      String?
+  address    String
+  city       String
+  postalCode String
+  country    String           @default("ES")
+  isActive   Boolean          @default(true)
+
+  // Relations
+  users          User[]
+  orders         Order[]        @relation("StoreOrders")
+  suppliedOrders Order[]        @relation("DistributorOrders")
+  products       Product[]
+  stocks         Stock[]
+  productPrices  ProductPrice[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([type])
+  @@index([isActive])
+}
+
+// ============================================
+// USERS & AUTH
+// ============================================
+
+model User {
+  id           String    @id @default(cuid())
+  email        String    @unique
+  passwordHash String
+  firstName    String
+  lastName     String
+  role         UserRole
+  isActive     Boolean   @default(true)
+  lastLoginAt  DateTime?
+
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  // Relations
+  refreshTokens     RefreshToken[]
+  orders            Order[]
+  carts             Cart[]
+  incidents         Incident[]     @relation("ReportedIncidents")
+  assignedIncidents Incident[]     @relation("AssignedIncidents")
+  auditLogs         AuditLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([email])
+  @@index([role])
+  @@index([organizationId])
+}
+
+model RefreshToken {
+  id        String   @id @default(cuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// ============================================
+// CATALOG
+// ============================================
+
+model Product {
+  id          String  @id @default(cuid())
+  sku         String  @unique
+  ean         String? // Barcode
+  name        String
+  description String?
+  brand       String
+  category    String
+  subcategory String?
+  imageUrl    String?
+  unit        String  @default("UND")
+  minOrderQty Int     @default(1)
+  isActive    Boolean @default(true)
+
+  distributorId String
+  distributor   Organization @relation(fields: [distributorId], references: [id])
+
+  // Relations
+  stocks     Stock[]
+  prices     ProductPrice[]
+  orderItems OrderItem[]
+  cartItems  CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([sku])
+  @@index([brand])
+  @@index([category])
+  @@index([isActive])
+  @@index([distributorId])
+}
+
+model Stock {
+  id             String       @id @default(cuid())
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  quantity     Int @default(0)
+  reservedQty  Int @default(0)
+  availableQty Int @default(0)
+
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, organizationId])
+  @@index([availableQty])
+}
+
+model ProductPrice {
+  id             String       @id @default(cuid())
+  productId      String
+  product        Product      @relation(fields: [productId], references: [id], onDelete: Cascade)
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+
+  basePrice       Decimal   @db.Decimal(10, 2)
+  discountPercent Decimal   @default(0) @db.Decimal(5, 2)
+  finalPrice      Decimal   @db.Decimal(10, 2)
+  currency        String    @default("EUR")
+  validFrom       DateTime  @default(now())
+  validTo         DateTime?
+
+  createdAt DateTime @default(now())
+
+  @@unique([productId, organizationId])
+}
+
+// ============================================
+// CART
+// ============================================
+
+model Cart {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  items CartItem[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id        String  @id @default(cuid())
+  cartId    String
+  cart      Cart    @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  quantity  Int
+  unitPrice Decimal @db.Decimal(10, 2)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([cartId, productId])
+}
+
+// ============================================
+// ORDERS
+// ============================================
+
+model Order {
+  id          String      @id @default(cuid())
+  orderNumber String      @unique
+  status      OrderStatus @default(DRAFT)
+
+  storeId       String
+  store         Organization @relation("StoreOrders", fields: [storeId], references: [id])
+  distributorId String
+  distributor   Organization @relation("DistributorOrders", fields: [distributorId], references: [id])
+  userId        String
+  user          User         @relation(fields: [userId], references: [id])
+
+  // Shipping
+  shippingAddress    String
+  shippingCity       String
+  shippingPostalCode String
+
+  // Totals
+  subtotal    Decimal @db.Decimal(12, 2)
+  taxPercent  Decimal @default(21) @db.Decimal(5, 2)
+  taxAmount   Decimal @db.Decimal(12, 2)
+  totalAmount Decimal @db.Decimal(12, 2)
+
+  notes String?
+
+  // Tracking
+  trackingNumber    String?
+  estimatedDelivery DateTime?
+  deliveredAt       DateTime?
+
+  // Relations
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
+  incidents     Incident[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderNumber])
+  @@index([status])
+  @@index([storeId])
+  @@index([distributorId])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String  @id @default(cuid())
+  orderId   String
+  order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product @relation(fields: [productId], references: [id])
+
+  // Snapshot data
+  sku  String
+  name String
+
+  quantity   Int
+  unitPrice  Decimal @db.Decimal(10, 2)
+  totalPrice Decimal @db.Decimal(12, 2)
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+}
+
+model OrderStatusHistory {
+  id      String @id @default(cuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+  comment    String?
+  changedBy  String
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([createdAt])
+}
+
+// ============================================
+// INCIDENTS
+// ============================================
+
+model Incident {
+  id             String         @id @default(cuid())
+  incidentNumber String         @unique
+  orderId        String
+  order          Order          @relation(fields: [orderId], references: [id])
+  type           IncidentType
+  status         IncidentStatus @default(OPEN)
+  description    String
+  resolution     String?
+
+  reportedById String
+  reportedBy   User    @relation("ReportedIncidents", fields: [reportedById], references: [id])
+  assignedToId String?
+  assignedTo   User?   @relation("AssignedIncidents", fields: [assignedToId], references: [id])
+
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  resolvedAt DateTime?
+
+  @@index([orderId])
+  @@index([status])
+  @@index([reportedById])
+}
+
+// ============================================
+// NOTIFICATIONS
+// ============================================
+
+model NotificationLog {
+  id             String           @id @default(cuid())
+  type           NotificationType
+  recipientEmail String
+  subject        String
+  body           String?
+  referenceId    String?
+  status         String           @default("sent")
+  errorMessage   String?
+
+  sentAt DateTime @default(now())
+
+  @@index([type])
+  @@index([referenceId])
+  @@index([sentAt])
+}
+
+// ============================================
+// INTEGRATIONS
+// ============================================
+
+model IntegrationJob {
+  id               String               @id @default(cuid())
+  type             IntegrationJobType
+  status           IntegrationJobStatus @default(PENDING)
+  fileName         String?
+  recordsProcessed Int                  @default(0)
+  recordsFailed    Int                  @default(0)
+  errorLog         String?
+
+  startedAt   DateTime?
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
+}
+
+// ============================================
+// AUDIT
+// ============================================
+
+model AuditLog {
+  id        String  @id @default(cuid())
+  userId    String
+  user      User    @relation(fields: [userId], references: [id])
+  action    String
+  entity    String
+  entityId  String
+  oldValues Json?
+  newValues Json?
+  ipAddress String?
+
+  createdAt DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@index([createdAt])
+}
