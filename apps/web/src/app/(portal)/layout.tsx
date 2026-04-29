@@ -10,9 +10,7 @@ import {
   ShoppingCart,
   FileText,
   AlertCircle,
-  User,
   LogOut,
-  Menu,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
