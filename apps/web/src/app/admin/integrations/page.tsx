@@ -84,9 +84,7 @@ export default function IntegrationsPage() {
 
   const exportMutation = useMutation({
     mutationFn: async (type: string) => {
-      const response = await apiClient.get(`/integrations/export/${type}`, {
-        responseType: 'blob',
-      });
+      const response = await apiClient.get<Blob>(`/integrations/export/${type}`);
       return { blob: response, type };
     },
     onSuccess: ({ blob, type }) => {
@@ -109,14 +107,9 @@ export default function IntegrationsPage() {
     if (!file) return;
 
     setIsUploading(true);
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('type', selectedImportType);
 
     try {
-      await apiClient.post('/integrations/import', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+      await apiClient.uploadFile(`/integrations/import?type=${selectedImportType}`, file);
       toast({ title: 'Importación iniciada', description: 'El archivo está siendo procesado' });
       refetchLogs();
     } catch (error) {

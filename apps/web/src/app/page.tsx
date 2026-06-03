@@ -14,7 +14,7 @@ export default function Home() {
     } else if (user.role === 'STORE') {
       router.push('/catalog');
     } else {
-      router.push('/dashboard');
+      router.push('/admin/dashboard');
     }
   }, [user, router]);
 

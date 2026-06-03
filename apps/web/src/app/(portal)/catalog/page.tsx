@@ -110,9 +110,9 @@ export default function CatalogPage() {
                       className="object-cover"
                     />
                   )}
-                  {product.price?.discountPercent > 0 && (
+                  {(product.price?.discountPercent ?? 0) > 0 && (
                     <span className="absolute top-2 left-2 bg-red-500 text-white text-xs font-medium px-2 py-1 rounded">
-                      -{product.price.discountPercent}%
+                      -{product.price?.discountPercent}%
                     </span>
                   )}
                 </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
-import { useAuthStore } from '@/stores/auth-store';
+import { useAuth } from '@/hooks/use-auth';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -46,7 +46,7 @@ const roleLabels: Record<string, string> = {
 };
 
 export default function ProfilePage() {
-  const { user, setUser } = useAuthStore();
+  const { user, setUser } = useAuth();
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
@@ -78,7 +78,7 @@ export default function ProfilePage() {
   } as { queryKey: string[]; queryFn: () => Promise<UserProfile>; onSuccess: (data: UserProfile) => void });
 
   const updateProfileMutation = useMutation({
-    mutationFn: (data: typeof profileData) => apiClient.patch('/auth/profile', data),
+    mutationFn: (data: typeof profileData) => apiClient.patch<UserProfile>('/auth/profile', data),
     onSuccess: (updatedUser: UserProfile) => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       setIsEditingProfile(false);

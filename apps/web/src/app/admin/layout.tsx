@@ -20,14 +20,14 @@ import {
 import { cn } from '@/lib/utils';
 
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
-  { name: 'Pedidos', href: '/orders', icon: FileText },
-  { name: 'Productos', href: '/products', icon: ShoppingCart },
-  { name: 'Usuarios', href: '/users', icon: Users },
-  { name: 'Organizaciones', href: '/organizations', icon: Building2 },
-  { name: 'Incidencias', href: '/incidents', icon: AlertCircle },
-  { name: 'Integraciones', href: '/integrations', icon: Upload },
-  { name: 'Informes', href: '/reports', icon: BarChart3 },
+  { name: 'Dashboard', href: '/admin/dashboard', icon: LayoutDashboard },
+  { name: 'Pedidos', href: '/admin/orders', icon: FileText },
+  { name: 'Productos', href: '/admin/products', icon: ShoppingCart },
+  { name: 'Usuarios', href: '/admin/users', icon: Users },
+  { name: 'Organizaciones', href: '/admin/organizations', icon: Building2 },
+  { name: 'Incidencias', href: '/admin/incidents', icon: AlertCircle },
+  { name: 'Integraciones', href: '/admin/integrations', icon: Upload },
+  { name: 'Informes', href: '/admin/reports', icon: BarChart3 },
 ];
 
 export default function BackofficeLayout({
@@ -61,7 +61,7 @@ export default function BackofficeLayout({
       {/* Sidebar */}
       <aside className="hidden md:flex w-64 flex-col bg-white border-r">
         <div className="h-16 flex items-center px-6 border-b">
-          <Link href="/dashboard" className="flex items-center gap-2">
+          <Link href="/admin/dashboard" className="flex items-center gap-2">
             <Package2 className="h-6 w-6 text-primary" />
             <span className="font-semibold">Cosmetic Pipeline</span>
           </Link>
