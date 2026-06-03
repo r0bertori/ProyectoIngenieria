@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils';
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Pedidos', href: '/orders', icon: FileText },
-  { name: 'Catálogo', href: '/catalog', icon: ShoppingCart },
+  { name: 'Productos', href: '/products', icon: ShoppingCart },
   { name: 'Usuarios', href: '/users', icon: Users },
   { name: 'Organizaciones', href: '/organizations', icon: Building2 },
   { name: 'Incidencias', href: '/incidents', icon: AlertCircle },

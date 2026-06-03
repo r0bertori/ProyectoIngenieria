@@ -209,4 +209,27 @@ export class CatalogService {
       count: b._count.brand,
     }));
   }
+
+  async uploadImage(id: string, filename: string) {
+    const product = await this.prisma.product.findUnique({ where: { id } });
+
+    if (!product) {
+      throw new NotFoundException('Product not found');
+    }
+
+    const imageUrl = `/uploads/products/${filename}`;
+
+    return this.prisma.product.update({
+      where: { id },
+      data: { imageUrl },
+      include: {
+        distributor: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
+      },
+    });
+  }
 }

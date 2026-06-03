@@ -46,3 +46,7 @@ prisma/migrations/**/migration_lock.toml
 # Misc
 *.pem
 .cache
+
+# Uploads (keep folder structure)
+apps/api/uploads/**/*
+!apps/api/uploads/**/.gitkeep
