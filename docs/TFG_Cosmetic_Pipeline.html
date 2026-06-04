@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Cosmetic Pipeline — Memoria del Proyecto</title>
+<style>
+/* ─── FUENTES ─────────────────────────────────────────────── */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Source+Serif+4:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+/* ─── PÁGINA ──────────────────────────────────────────────── */
+@page { size: A4; margin: 0; }
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { background: #e5e7eb; }
+
+body {
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 10.5pt;
+  line-height: 1.7;
+  color: #1e293b;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+/* Cada .page es exactamente una hoja A4 */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  margin: 0 auto 8mm;
+  position: relative;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+
+/* ─── PORTADA ─────────────────────────────────────────────── */
+.cover {
+  width: 210mm;
+  height: 297mm;
+  background: white;
+  margin: 0 auto 8mm;
+  page-break-after: always;
+  break-after: page;
+  display: flex;
+  flex-direction: column;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.cover-band {
+  background: #E30613;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+  padding: 22px 52px;
+}
+.cover-band table { width: 100%; border-collapse: collapse; }
+.cover-band td { border: none; background: transparent; padding: 0; }
+.cover-band .uni-name {
+  font-family: 'Inter', sans-serif;
+  font-size: 13pt;
+  font-weight: 700;
+  color: white;
+}
+.cover-band .uni-sub {
+  font-family: 'Inter', sans-serif;
+  font-size: 9pt;
+  color: rgba(255,255,255,0.8);
+  margin-top: 3px;
+}
+.cover-logo {
+  width: 56px; height: 56px;
+  background: white;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 56px;
+  font-family: 'Inter', sans-serif;
+  font-size: 18pt;
+  font-weight: 900;
+  color: #E30613;
+  display: inline-block;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+.cover-body {
+  flex: 1;
+  padding: 48px 52px 32px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.cover-tag {
+  font-family: 'Inter', sans-serif;
+  font-size: 8pt;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #E30613;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 5px 16px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 28px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.cover-title {
+  font-size: 34pt;
+  font-weight: 700;
+  color: #1a1a2e;
+  line-height: 1.1;
+  margin-bottom: 12px;
+}
+.cover-subtitle {
+  font-size: 14pt;
+  font-weight: 300;
+  color: #64748b;
+  font-style: italic;
+  margin-bottom: 32px;
+}
+.cover-line {
+  width: 72px; height: 3px;
+  background: #E30613;
+  margin: 0 auto 32px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.cover-meta-table { width: 100%; border-collapse: separate; border-spacing: 10px; }
+.cover-meta-box {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 18px;
+  text-align: left;
+  vertical-align: top;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.meta-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 7pt;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #64748b;
+  margin-bottom: 8px;
+  display: block;
+}
+.meta-value {
+  font-family: 'Inter', sans-serif;
+  font-size: 9pt;
+  font-weight: 500;
+  color: #1e293b;
+  line-height: 1.7;
+}
+.meta-stat { font-size: 13pt; font-weight: 800; color: #E30613; line-height: 1.2; display: block; }
+.meta-stat-label { font-family: 'Inter', sans-serif; font-size: 8pt; color: #64748b; }
+
+.cover-footer {
+  background: #1a1a2e;
+  padding: 14px 52px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.cover-footer table { width: 100%; border-collapse: collapse; }
+.cover-footer td { border: none; background: transparent; padding: 0; font-family: 'Inter', sans-serif; font-size: 8pt; color: rgba(255,255,255,0.5); }
+.cover-footer .doc-ref { color: white; font-weight: 600; text-align: center; }
+.cover-footer .right { text-align: right; }
+
+/* ─── TOC ─────────────────────────────────────────────────── */
+.toc-wrap { padding: 56px 52px; }
+.section-label {
+  font-family: 'Inter', sans-serif;
+  font-size: 8.5pt;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #E30613;
+  border-bottom: 2px solid #E30613;
+  padding-bottom: 10px;
+  margin-bottom: 24px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.toc-table { width: 100%; border-collapse: collapse; }
+.toc-table tr.toc-h1 td { padding: 6px 0; border-bottom: 1px dotted #e2e8f0; }
+.toc-table tr.toc-h2 td { padding: 4px 0; border-bottom: 1px dotted #f1f5f9; }
+.toc-num { font-family: 'Inter', sans-serif; font-weight: 800; font-size: 8.5pt; color: #E30613; width: 26px; }
+.toc-text { font-family: 'Source Serif 4', serif; font-size: 10.5pt; padding: 0 10px; }
+.toc-text.sub { padding-left: 28px; font-size: 9.5pt; color: #64748b; }
+.toc-pg { font-family: 'Inter', sans-serif; font-size: 8.5pt; font-weight: 600; color: #94a3b8; text-align: right; width: 24px; }
+
+/* ─── CONTENIDO ───────────────────────────────────────────── */
+.content-wrap { padding: 52px 52px 40px; }
+
+.chapter-row { margin-bottom: 32px; padding-bottom: 16px; border-bottom: 2px solid #e2e8f0; }
+.chapter-row table { width: 100%; border-collapse: collapse; }
+.chapter-row td { border: none; background: transparent; padding: 0; vertical-align: middle; }
+.ch-num {
+  font-family: 'Inter', sans-serif;
+  font-size: 26pt;
+  font-weight: 900;
+  color: #f1f5f9;
+  width: 60px;
+  line-height: 1;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.ch-tag { font-family: 'Inter', sans-serif; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #E30613; margin-bottom: 2px; }
+.ch-title { font-family: 'Source Serif 4', serif; font-size: 20pt; font-weight: 700; color: #1a1a2e; line-height: 1.2; }
+
+h2 {
+  font-family: 'Inter', sans-serif;
+  font-size: 12pt;
+  font-weight: 700;
+  color: #1a1a2e;
+  padding-left: 10px;
+  border-left: 3px solid #E30613;
+  margin: 28px 0 12px;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+h3 { font-family: 'Inter', sans-serif; font-size: 10.5pt; font-weight: 600; color: #1e293b; margin: 18px 0 8px; }
+p { margin-bottom: 10px; }
+
+/* ─── TABLAS ──────────────────────────────────────────────── */
+.data-table { width: 100%; border-collapse: collapse; margin: 12px 0 20px; font-family: 'Inter', sans-serif; font-size: 9pt; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.data-table thead tr { background: #1a1a2e; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.data-table thead th { padding: 9px 12px; text-align: left; font-weight: 600; font-size: 8.5pt; color: white; letter-spacing: 0.03em; }
+.data-table th.r { text-align: right; }
+.data-table tbody tr:nth-child(even) { background: #f8fafc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.data-table td { padding: 8px 12px; border-bottom: 1px solid #e2e8f0; vertical-align: top; color: #1e293b; }
+.data-table td.r { text-align: right; font-variant-numeric: tabular-nums; }
+.data-table td.c { text-align: center; }
+.data-table tr.total-row { font-weight: 700; background: #f0fdf4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.data-table tr.total-row td { color: #166534; }
+
+/* ─── BADGES ──────────────────────────────────────────────── */
+.b { display: inline-block; font-family: 'Inter', sans-serif; font-size: 7.5pt; font-weight: 700; padding: 2px 9px; border-radius: 10px; white-space: nowrap; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.bg { background: #dcfce7; color: #166534; }
+.by { background: #fef9c3; color: #713f12; }
+.bo { background: #ffedd5; color: #9a3412; }
+.br { background: #fee2e2; color: #991b1b; }
+.bb { background: #dbeafe; color: #1e40af; }
+.bgr { background: #f1f5f9; color: #475569; }
+.bm { background: #fae8ff; color: #7e22ce; }
+
+/* ─── KPI TABLE ───────────────────────────────────────────── */
+.kpi-table { width: 100%; border-collapse: separate; border-spacing: 10px; margin: 16px 0 20px; break-inside: avoid; }
+.kpi-cell {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 16px 18px;
+  vertical-align: top;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+.kpi-cell.top-green { border-top: 3px solid #16a34a; }
+.kpi-cell.top-blue  { border-top: 3px solid #2563eb; }
+.kpi-cell.top-red   { border-top: 3px solid #E30613; }
+.kpi-lbl { font-family: 'Inter', sans-serif; font-size: 7.5pt; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: #64748b; margin-bottom: 6px; }
+.kpi-val { font-family: 'Inter', sans-serif; font-size: 22pt; font-weight: 900; color: #1a1a2e; line-height: 1; }
+.kpi-sub { font-family: 'Inter', sans-serif; font-size: 8.5pt; color: #64748b; margin-top: 5px; }
+
+/* ─── PROGRESS BAR ────────────────────────────────────────── */
+.prog-wrap { margin-bottom: 13px; break-inside: avoid; }
+.prog-header { font-family: 'Inter', sans-serif; font-size: 9pt; font-weight: 500; color: #1e293b; margin-bottom: 5px; }
+.prog-right { float: right; }
+.prog-track { height: 8px; background: #e2e8f0; border-radius: 4px; overflow: hidden; clear: both; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.prog-fill { height: 8px; border-radius: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.pf-green { background: #16a34a; }
+.pf-blue  { background: #2563eb; }
+.pf-orange{ background: #ea580c; }
+
+/* ─── INFO BOX ────────────────────────────────────────────── */
+.ibox { border-radius: 7px; padding: 13px 16px; margin: 12px 0; border-left: 4px solid; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.ibox p { margin: 0; font-size: 9.5pt; }
+.ibox-info    { background: #eff6ff; border-color: #2563eb; }
+.ibox-success { background: #f0fdf4; border-color: #16a34a; }
+.ibox-warn    { background: #fffbeb; border-color: #f59e0b; }
+
+/* ─── DOS COLUMNAS (tabla) ────────────────────────────────── */
+.two-col-table { width: 100%; border-collapse: separate; border-spacing: 16px; margin: 10px 0; }
+.two-col-table td { vertical-align: top; width: 50%; border: none; background: transparent; padding: 0; }
+.three-col-table { width: 100%; border-collapse: separate; border-spacing: 10px; margin: 10px 0; }
+.three-col-table td { vertical-align: top; width: 33.33%; border: none; background: transparent; padding: 0; }
+
+/* ─── STACK CARDS ─────────────────────────────────────────── */
+.stack-card { border: 1px solid #e2e8f0; border-radius: 8px; padding: 14px 16px; background: #f8fafc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.stack-layer { font-family: 'Inter', sans-serif; font-size: 7pt; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #E30613; margin-bottom: 4px; }
+.stack-name  { font-family: 'Inter', sans-serif; font-size: 10.5pt; font-weight: 700; color: #1a1a2e; margin-bottom: 3px; }
+.stack-desc  { font-family: 'Inter', sans-serif; font-size: 8pt; color: #64748b; line-height: 1.5; }
+
+/* ─── GANTT ───────────────────────────────────────────────── */
+.gantt-table { width: 100%; border-collapse: collapse; font-family: 'Inter', sans-serif; font-size: 8pt; margin: 14px 0; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.gantt-table th { background: #1a1a2e; color: white; text-align: center; padding: 7px 4px; font-weight: 600; font-size: 7.5pt; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.gantt-table th.gl { text-align: left; padding-left: 10px; width: 148px; }
+.gantt-table td { padding: 5px 4px; border-bottom: 1px solid #e2e8f0; text-align: center; }
+.gantt-table td.gl { text-align: left; padding-left: 10px; font-weight: 600; color: #1e293b; font-size: 8pt; }
+.gantt-table tr:nth-child(even) td { background: #f8fafc; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.gc-done { display: block; height: 14px; background: #16a34a; border-radius: 3px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.gc-late { display: block; height: 14px; background: #f97316; border-radius: 3px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.gc-empty { display: block; height: 14px; }
+.gantt-legend { font-family: 'Inter', sans-serif; font-size: 8pt; color: #64748b; margin-top: 8px; }
+.gl-dot { display: inline-block; width: 14px; height: 10px; border-radius: 2px; vertical-align: middle; margin-right: 4px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+/* ─── ENTIDADES BD ────────────────────────────────────────── */
+.entity-wrap { margin: 14px 0; }
+.entity-box { display: inline-block; vertical-align: top; border: 1.5px solid #e2e8f0; border-radius: 7px; overflow: hidden; margin: 4px; width: 132px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.entity-h { background: #1a1a2e; color: white; padding: 5px 10px; font-family: 'Inter', sans-serif; font-size: 8.5pt; font-weight: 700; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.entity-b { background: #f8fafc; padding: 5px 10px; font-family: 'Inter', sans-serif; font-size: 7.5pt; line-height: 1.7; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.epk { color: #E30613; font-weight: 700; }
+.efk { color: #2563eb; }
+
+/* ─── FLUJO ESTADOS ───────────────────────────────────────── */
+.flow-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 20px; text-align: center; font-family: 'Inter', sans-serif; font-size: 9pt; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+/* ─── CHECKLIST ───────────────────────────────────────────── */
+.checklist { list-style: none; margin: 10px 0; }
+.checklist li { font-family: 'Inter', sans-serif; font-size: 9.5pt; padding: 3px 0; padding-left: 20px; position: relative; }
+.checklist li::before { content: "✓"; position: absolute; left: 0; color: #16a34a; font-weight: 800; }
+
+/* ─── ARQUITECTURA ────────────────────────────────────────── */
+.arch-layer { border-radius: 6px; padding: 10px 16px; text-align: center; font-family: 'Inter', sans-serif; font-size: 9pt; font-weight: 700; margin: 6px 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.arch-client { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+.arch-api    { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+.arch-db     { background: #fef9c3; color: #713f12; border: 1px solid #fde047; }
+.arch-arrow  { text-align: center; font-family: 'Inter', sans-serif; font-size: 9pt; color: #94a3b8; padding: 2px 0; }
+
+/* ─── CODE ────────────────────────────────────────────────── */
+code { font-family: 'Courier New', monospace; background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 8.5pt; color: #0f172a; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.code-block { background: #0f172a; color: #e2e8f0; border-radius: 7px; padding: 16px 20px; font-family: 'Courier New', monospace; font-size: 8.5pt; line-height: 1.8; margin: 12px 0; break-inside: avoid; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.code-comment { color: #64748b; }
+
+/* ─── PIE DE PÁGINA ───────────────────────────────────────── */
+.page-foot { margin-top: 32px; padding-top: 14px; border-top: 1px solid #e2e8f0; }
+.page-foot table { width: 100%; border-collapse: collapse; }
+.page-foot td { border: none; background: transparent; padding: 0; font-family: 'Inter', sans-serif; font-size: 7.5pt; color: #94a3b8; }
+.page-foot .right { text-align: right; }
+.page-foot .center { text-align: center; }
+
+/* ─── PRINT ───────────────────────────────────────────────── */
+@media print {
+  html, body { background: white; }
+  .page, .cover { margin: 0; box-shadow: none; }
+  .page { page-break-after: always; break-after: page; }
+  .cover { page-break-after: always; break-after: page; }
+  h2, h3, .kpi-table, .data-table, .gantt-table { break-inside: avoid; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════ PORTADA ══════════════ -->
+<div class="cover">
+  <div class="cover-band">
+    <table><tr>
+      <td><div class="uni-name">Universidad Europea de Madrid</div><div class="uni-sub">Escuela de Informática y Telecomunicaciones · Ingeniería de Software</div></td>
+      <td style="width:64px;text-align:right;"><div class="cover-logo">UE</div></td>
+    </tr></table>
+  </div>
+
+  <div class="cover-body">
+    <div class="cover-tag">Memoria Final de Proyecto</div>
+    <div class="cover-title">Cosmetic Pipeline</div>
+    <div class="cover-subtitle">Plataforma B2B para la gestión de pedidos en el sector cosmético</div>
+    <div class="cover-line"></div>
+
+    <table class="cover-meta-table">
+      <tr>
+        <td class="cover-meta-box" style="width:48%;">
+          <span class="meta-label">Equipo de Desarrollo</span>
+          <div class="meta-value">Alejandro Medina<br>Alejandro Rodas<br>Miguel Ángel Sánchez<br>Roberto Ruiz</div>
+        </td>
+        <td style="width:4%;"></td>
+        <td class="cover-meta-box" style="width:48%;">
+          <span class="meta-label">Datos del Proyecto</span>
+          <div class="meta-value">Duración: 11 semanas<br>Inicio: 10 febrero 2026<br>Cierre: 2 mayo 2026<br>Versión: v4.0 Final</div>
+        </td>
+      </tr>
+      <tr><td colspan="3" style="height:10px;"></td></tr>
+      <tr>
+        <td colspan="3" class="cover-meta-box">
+          <span class="meta-label">Resultados del Proyecto</span>
+          <table style="width:100%;border-collapse:collapse;margin-top:6px;">
+            <tr>
+              <td style="text-align:center;border:none;background:transparent;padding:0;"><span class="meta-stat">100%</span><div class="meta-stat-label">Completado</div></td>
+              <td style="text-align:center;border:none;background:transparent;padding:0;"><span class="meta-stat">6.520€</span><div class="meta-stat-label">Presupuesto</div></td>
+              <td style="text-align:center;border:none;background:transparent;padding:0;"><span class="meta-stat">398h</span><div class="meta-stat-label">Horas totales</div></td>
+              <td style="text-align:center;border:none;background:transparent;padding:0;"><span class="meta-stat">44</span><div class="meta-stat-label">Endpoints API</div></td>
+              <td style="text-align:center;border:none;background:transparent;padding:0;"><span class="meta-stat">15</span><div class="meta-stat-label">Páginas web</div></td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="cover-footer">
+    <table><tr>
+      <td>Cosmetic Pipeline — Memoria Final del Proyecto</td>
+      <td class="doc-ref">UEM · Ingeniería de Software · 2025–2026</td>
+      <td class="right">Junio 2026</td>
+    </tr></table>
+  </div>
+</div>
+
+
+<!-- ══════════════ ÍNDICE ══════════════ -->
+<div class="page">
+<div class="toc-wrap">
+  <div class="section-label">Índice de Contenidos</div>
+  <table class="toc-table">
+    <tr class="toc-h1"><td class="toc-num">1</td><td class="toc-text">Resumen Ejecutivo</td><td class="toc-pg">3</td></tr>
+    <tr class="toc-h1"><td class="toc-num">2</td><td class="toc-text">Introducción y Contexto del Proyecto</td><td class="toc-pg">4</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">2.1 Descripción del problema</td><td class="toc-pg">4</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">2.2 Objetivos del proyecto</td><td class="toc-pg">4</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">2.3 Alcance y límites</td><td class="toc-pg">4</td></tr>
+    <tr class="toc-h1"><td class="toc-num">3</td><td class="toc-text">Planificación y Metodología</td><td class="toc-pg">5</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">3.1 Metodología de trabajo</td><td class="toc-pg">5</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">3.2 Cronograma — Diagrama de Gantt</td><td class="toc-pg">5</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">3.3 Hitos del proyecto</td><td class="toc-pg">5</td></tr>
+    <tr class="toc-h1"><td class="toc-num">4</td><td class="toc-text">Arquitectura del Sistema</td><td class="toc-pg">6</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">4.1 Stack tecnológico</td><td class="toc-pg">6</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">4.2 Arquitectura de capas</td><td class="toc-pg">6</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">4.3 Diseño de la base de datos</td><td class="toc-pg">6</td></tr>
+    <tr class="toc-h1"><td class="toc-num">5</td><td class="toc-text">Backend — API REST</td><td class="toc-pg">7</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">5.1 Módulos implementados</td><td class="toc-pg">7</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">5.2 Autenticación y control de acceso (RBAC)</td><td class="toc-pg">7</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">5.3 Catálogo de endpoints principales</td><td class="toc-pg">7</td></tr>
+    <tr class="toc-h1"><td class="toc-num">6</td><td class="toc-text">Frontend — Interfaz de Usuario</td><td class="toc-pg">8</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">6.1 Portal B2B (Tienda)</td><td class="toc-pg">8</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">6.2 Backoffice (Administración)</td><td class="toc-pg">8</td></tr>
+    <tr class="toc-h1"><td class="toc-num">7</td><td class="toc-text">Gestión del Proyecto</td><td class="toc-pg">9</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">7.1 Equipo y roles</td><td class="toc-pg">9</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">7.2 Comunicación y herramientas</td><td class="toc-pg">9</td></tr>
+    <tr class="toc-h1"><td class="toc-num">8</td><td class="toc-text">Presupuesto y Costes</td><td class="toc-pg">10</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">8.1 Resumen presupuestario</td><td class="toc-pg">10</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">8.2 Desglose por concepto</td><td class="toc-pg">10</td></tr>
+    <tr class="toc-h2"><td class="toc-num"></td><td class="toc-text sub">8.3 Horas por área</td><td class="toc-pg">10</td></tr>
+    <tr class="toc-h1"><td class="toc-num">9</td><td class="toc-text">Análisis de Riesgos</td><td class="toc-pg">11</td></tr>
+    <tr class="toc-h1"><td class="toc-num">10</td><td class="toc-text">Conclusiones y Lecciones Aprendidas</td><td class="toc-pg">12</td></tr>
+    <tr class="toc-h1"><td class="toc-num">A</td><td class="toc-text">Anexo — Guía de instalación y arranque</td><td class="toc-pg">13</td></tr>
+  </table>
+</div>
+<div style="padding:0 52px;">
+<div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Índice</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 1 — RESUMEN EJECUTIVO ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">01</td>
+      <td><div class="ch-tag">Capítulo 1</div><div class="ch-title">Resumen Ejecutivo</div></td>
+    </tr></table>
+  </div>
+
+  <p><strong>Cosmetic Pipeline</strong> es una plataforma web B2B desarrollada para digitalizar y centralizar la gestión de pedidos entre distribuidoras y tiendas del sector cosmético. Fue encargada en el marco de la asignatura de Ingeniería de Software de la Universidad Europea de Madrid y desarrollada en 11 semanas por un equipo de 4 ingenieros.</p>
+
+  <p>El sistema resuelve un proceso gestionado hasta ahora de forma manual (correo electrónico, teléfono, hojas de cálculo), ofreciendo un portal de compra self-service para las tiendas y un backoffice completo para la distribuidora.</p>
+
+  <table class="kpi-table">
+    <tr>
+      <td class="kpi-cell top-green"><div class="kpi-lbl">Estado del proyecto</div><div class="kpi-val">100%</div><div class="kpi-sub">Completado en plazo</div></td>
+      <td class="kpi-cell top-blue"><div class="kpi-lbl">Presupuesto consumido</div><div class="kpi-val">5.980€</div><div class="kpi-sub">de 6.520€ (91,7%)</div></td>
+      <td class="kpi-cell top-blue"><div class="kpi-lbl">Horas trabajadas</div><div class="kpi-val">398h</div><div class="kpi-sub">de 408h estimadas (97,5%)</div></td>
+    </tr>
+    <tr><td colspan="3" style="height:10px;border:none;background:transparent;padding:0;"></td></tr>
+    <tr>
+      <td class="kpi-cell top-green"><div class="kpi-lbl">Endpoints API</div><div class="kpi-val">44</div><div class="kpi-sub">9 módulos backend</div></td>
+      <td class="kpi-cell top-green"><div class="kpi-lbl">Páginas frontend</div><div class="kpi-val">15</div><div class="kpi-sub">Portal + Backoffice</div></td>
+      <td class="kpi-cell top-green"><div class="kpi-lbl">Entidades en BD</div><div class="kpi-val">16</div><div class="kpi-sub">Tablas PostgreSQL</div></td>
+    </tr>
+  </table>
+
+  <h2>Entregables finales</h2>
+  <table class="data-table">
+    <thead><tr><th>Entregable</th><th>Descripción</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><strong>v1.0 — Backend API</strong></td><td>9 módulos NestJS, 44 endpoints REST, Swagger docs</td><td><span class="b bg">✓ Entregado</span></td></tr>
+      <tr><td><strong>v2.0 — Portal Tienda</strong></td><td>Login, catálogo, carrito, pedidos, incidencias, perfil</td><td><span class="b bg">✓ Entregado</span></td></tr>
+      <tr><td><strong>v3.0 — Backoffice Admin</strong></td><td>Dashboard, pedidos, catálogo, usuarios, organizaciones, incidencias, reportes</td><td><span class="b bg">✓ Entregado</span></td></tr>
+      <tr><td><strong>v4.0 — Integraciones</strong></td><td>CSV import/export, historial de jobs, plantillas descargables</td><td><span class="b bg">✓ Entregado</span></td></tr>
+      <tr><td><strong>Documentación</strong></td><td>README técnico, Swagger API, Memoria final del proyecto</td><td><span class="b bg">✓ Entregado</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 1 · Resumen Ejecutivo</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 2 — INTRODUCCIÓN ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">02</td>
+      <td><div class="ch-tag">Capítulo 2</div><div class="ch-title">Introducción y Contexto</div></td>
+    </tr></table>
+  </div>
+
+  <h2>2.1 Descripción del problema</h2>
+  <p>Las distribuidoras de productos cosméticos gestionan sus relaciones comerciales con tiendas minoristas a través de canales informales: llamadas telefónicas, correos electrónicos y catálogos en PDF. Este proceso genera ineficiencias significativas:</p>
+  <ul style="margin: 10px 0 14px 22px; font-family: 'Inter', sans-serif; font-size: 10pt; line-height: 2;">
+    <li>Pérdida de pedidos por falta de trazabilidad</li>
+    <li>Errores en precios y disponibilidad de stock</li>
+    <li>Gestión manual de incidencias (roturas, productos incorrectos)</li>
+    <li>Ausencia de datos para la toma de decisiones (KPIs, reportes)</li>
+    <li>Dificultad para escalar el número de tiendas clientes</li>
+  </ul>
+
+  <h2>2.2 Objetivos del proyecto</h2>
+  <table class="two-col-table">
+    <tr>
+      <td>
+        <h3>Objetivo principal</h3>
+        <p style="font-family:'Inter',sans-serif;font-size:9.5pt;">Desarrollar una plataforma web B2B que permita a las tiendas realizar pedidos online de forma autónoma y a la distribuidora gestionar todo el proceso desde un backoffice centralizado.</p>
+      </td>
+      <td>
+        <h3>Objetivos específicos</h3>
+        <ul class="checklist">
+          <li>Portal de compra self-service para tiendas</li>
+          <li>Gestión del ciclo de vida completo de pedidos</li>
+          <li>Sistema de incidencias posventa</li>
+          <li>Backoffice con KPIs y reportes</li>
+          <li>Integración CSV para importar/exportar datos</li>
+          <li>Autenticación segura con control de acceso RBAC</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <h2>2.3 Alcance y límites</h2>
+  <table class="data-table">
+    <thead><tr><th>Dentro del alcance</th><th>Fuera del alcance</th></tr></thead>
+    <tbody>
+      <tr><td>Portal de compra para tiendas (rol STORE)</td><td>Pasarela de pago real (Stripe, Redsys)</td></tr>
+      <tr><td>Backoffice para administración y operaciones</td><td>Aplicación móvil nativa</td></tr>
+      <tr><td>API REST con documentación Swagger</td><td>Integración con ERPs externos</td></tr>
+      <tr><td>Sistema de notificaciones por email (simulado)</td><td>Módulo de facturación electrónica</td></tr>
+      <tr><td>Import/export de catálogo y stock vía CSV</td><td>Firma electrónica de pedidos</td></tr>
+      <tr><td>Control de acceso basado en roles (RBAC)</td><td>Despliegue en producción real</td></tr>
+    </tbody>
+  </table>
+
+  <div class="ibox ibox-info">
+    <p><strong>Entorno de demostración:</strong> La aplicación incluye datos de demo con 42 productos cosméticos, 2 organizaciones, 4 usuarios de distintos roles y varios pedidos en diferentes estados para facilitar la evaluación del flujo completo.</p>
+  </div>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 2 · Introducción y Contexto</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 3 — PLANIFICACIÓN ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">03</td>
+      <td><div class="ch-tag">Capítulo 3</div><div class="ch-title">Planificación y Metodología</div></td>
+    </tr></table>
+  </div>
+
+  <h2>3.1 Metodología de trabajo</h2>
+  <p>El proyecto se ha desarrollado siguiendo una <strong>metodología ágil adaptada</strong> con sprints de dos semanas y entregas incrementales. Se realizaron standups tres veces por semana (15 min) y demos semanales los viernes para revisar el avance con el supervisor.</p>
+
+  <table class="kpi-table">
+    <tr>
+      <td class="kpi-cell"><div class="kpi-lbl">Sprints</div><div class="kpi-val" style="font-size:18pt;">5</div><div class="kpi-sub">de 2 semanas cada uno</div></td>
+      <td class="kpi-cell"><div class="kpi-lbl">Daily standups</div><div class="kpi-val" style="font-size:18pt;">3/sem</div><div class="kpi-sub">Lun, Mié, Vie · 15 min</div></td>
+      <td class="kpi-cell"><div class="kpi-lbl">Control de versiones</div><div class="kpi-val" style="font-size:18pt;">Git</div><div class="kpi-sub">GitHub · rama main</div></td>
+    </tr>
+  </table>
+
+  <h2>3.2 Cronograma — Diagrama de Gantt</h2>
+  <table class="gantt-table">
+    <thead>
+      <tr>
+        <th class="gl">Actividad</th>
+        <th>S1</th><th>S2</th><th>S3</th><th>S4</th><th>S5</th><th>S6</th><th>S7</th><th>S8</th><th>S9</th><th>S10</th><th>S11</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="gl">Requisitos y Arquitectura</td>
+        <td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+      </tr>
+      <tr>
+        <td class="gl">Diseño BD y API</td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+        <td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+      </tr>
+      <tr>
+        <td class="gl">Desarrollo Backend</td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+        <td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+      </tr>
+      <tr>
+        <td class="gl">Portal Tienda (Frontend)</td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+        <td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+      </tr>
+      <tr>
+        <td class="gl">Backoffice (Frontend)</td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+        <td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-late"></span></td><td><span class="gc-done"></span></td>
+        <td><span class="gc-empty"></span></td>
+      </tr>
+      <tr>
+        <td class="gl">Integraciones CSV</td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+        <td><span class="gc-done"></span></td><td><span class="gc-done"></span></td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+      </tr>
+      <tr>
+        <td class="gl">QA y Testing</td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+        <td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td>
+        <td><span class="gc-empty"></span></td>
+      </tr>
+      <tr>
+        <td class="gl">Documentación</td>
+        <td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td><td><span class="gc-empty"></span></td>
+        <td><span class="gc-done"></span></td><td><span class="gc-done"></span></td><td><span class="gc-done"></span></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="gantt-legend">
+    <span class="gl-dot" style="background:#16a34a;"></span>Completado en plazo &nbsp;&nbsp;
+    <span class="gl-dot" style="background:#f97316;"></span>Completado con retraso (~1 semana)
+  </div>
+
+  <h2>3.3 Hitos del proyecto</h2>
+  <table class="data-table">
+    <thead><tr><th>Hito</th><th>Fecha planificada</th><th>Fecha real</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td>Backlog y arquitectura aprobados</td><td>Sem 3 — 28/02/2026</td><td>28/02/2026</td><td><span class="b bg">✓ En plazo</span></td></tr>
+      <tr><td>Backend API completo (v1.0)</td><td>Sem 6 — 21/03/2026</td><td>20/03/2026</td><td><span class="b bg">✓ Adelantado</span></td></tr>
+      <tr><td>Demo Portal Tienda funcional</td><td>Sem 7 — 28/03/2026</td><td>31/03/2026</td><td><span class="b by">~ +3 días</span></td></tr>
+      <tr><td>Backoffice completo (v3.0)</td><td>Sem 9 — 11/04/2026</td><td>18/04/2026</td><td><span class="b by">~ +1 semana</span></td></tr>
+      <tr><td>UAT y aceptación</td><td>Sem 10 — 18/04/2026</td><td>25/04/2026</td><td><span class="b by">~ +1 semana</span></td></tr>
+      <tr><td>Entrega final y documentación</td><td>Sem 11 — 02/05/2026</td><td>02/05/2026</td><td><span class="b bg">✓ En plazo</span></td></tr>
+    </tbody>
+  </table>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 3 · Planificación y Metodología</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 4 — ARQUITECTURA ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">04</td>
+      <td><div class="ch-tag">Capítulo 4</div><div class="ch-title">Arquitectura del Sistema</div></td>
+    </tr></table>
+  </div>
+
+  <h2>4.1 Stack tecnológico</h2>
+  <table class="two-col-table">
+    <tr>
+      <td><div class="stack-card"><div class="stack-layer">Frontend</div><div class="stack-name">Next.js 14 + React 18</div><div class="stack-desc">App Router, TypeScript 5.4, Tailwind CSS 3.4, Radix UI, Zustand (estado global), TanStack Query</div></div></td>
+      <td><div class="stack-card"><div class="stack-layer">Backend</div><div class="stack-name">NestJS 10</div><div class="stack-desc">TypeScript 5.4, arquitectura modular, Prisma ORM 5.10, class-validator para DTOs, Swagger</div></div></td>
+    </tr>
+    <tr><td colspan="2" style="height:10px;"></td></tr>
+    <tr>
+      <td><div class="stack-card"><div class="stack-layer">Base de datos</div><div class="stack-name">PostgreSQL 16</div><div class="stack-desc">16 tablas, índices optimizados, relaciones con integridad referencial, gestionada con Prisma Migrate</div></div></td>
+      <td><div class="stack-card"><div class="stack-layer">Autenticación</div><div class="stack-name">JWT + Refresh Tokens</div><div class="stack-desc">Access token (15 min) + Refresh token (7 días). RBAC con 4 roles. Guards de NestJS + Passport.js</div></div></td>
+    </tr>
+    <tr><td colspan="2" style="height:10px;"></td></tr>
+    <tr>
+      <td><div class="stack-card"><div class="stack-layer">Infraestructura</div><div class="stack-name">Docker + Turborepo</div><div class="stack-desc">Docker Compose para PostgreSQL y Mailhog. Turborepo para monorepo con caché de builds</div></div></td>
+      <td><div class="stack-card"><div class="stack-layer">Entorno de desarrollo</div><div class="stack-name">Git + GitHub</div><div class="stack-desc">Node.js ≥ 20, npm workspaces, ESLint, Prettier, VSCode. Windows 11 con WSL2 (Ubuntu)</div></div></td>
+    </tr>
+  </table>
+
+  <h2>4.2 Arquitectura de capas</h2>
+  <div style="width:60%;margin:14px auto;">
+    <div class="arch-layer arch-client">🌐 CLIENTE (Navegador) — Next.js 14 · Puerto 3000</div>
+    <div class="arch-arrow">↕ HTTP/HTTPS · JWT Bearer Token</div>
+    <div class="arch-layer arch-api">⚙️ API REST — NestJS 10 · Puerto 3001 · Swagger en /api/docs</div>
+    <div class="arch-arrow">↕ Prisma Client ORM</div>
+    <div class="arch-layer arch-db">🗄️ PostgreSQL 16 · Puerto 5432 (Docker) + Mailhog 8025</div>
+  </div>
+
+  <h2>4.3 Diseño de la base de datos</h2>
+  <p>El esquema consta de <strong>16 entidades</strong> organizadas en 5 dominios funcionales:</p>
+  <div class="entity-wrap">
+    <div class="entity-box"><div class="entity-h">Organization</div><div class="entity-b"><span class="epk">id</span> (PK)<br>name, type<br>taxId (unique)<br>email, phone<br>address, city<br>isActive</div></div>
+    <div class="entity-box"><div class="entity-h">User</div><div class="entity-b"><span class="epk">id</span> (PK)<br>email (unique)<br>passwordHash<br>firstName, lastName<br>role (RBAC)<br><span class="efk">organizationId</span> (FK)</div></div>
+    <div class="entity-box"><div class="entity-h">Product</div><div class="entity-b"><span class="epk">id</span> (PK)<br>sku (unique), ean<br>name, brand<br>category, imageUrl<br>minOrderQty<br><span class="efk">distributorId</span> (FK)</div></div>
+    <div class="entity-box"><div class="entity-h">Order</div><div class="entity-b"><span class="epk">id</span> (PK)<br>orderNumber (unique)<br>status (8 estados)<br>subtotal, taxAmount<br>totalAmount<br><span class="efk">storeId, distId</span> (FK)</div></div>
+    <div class="entity-box"><div class="entity-h">Incident</div><div class="entity-b"><span class="epk">id</span> (PK)<br>incidentNumber<br>type (6 tipos)<br>status (4 estados)<br>description<br><span class="efk">orderId</span> (FK)</div></div>
+    <div class="entity-box"><div class="entity-h">Stock / Price</div><div class="entity-b"><span class="epk">id</span> (PK)<br>quantity, reservedQty<br>basePrice<br>discountPercent<br>finalPrice<br><span class="efk">productId, orgId</span> (FK)</div></div>
+  </div>
+  <p style="font-family:'Inter',sans-serif;font-size:8.5pt;color:#64748b;margin-top:6px;">Entidades adicionales: <code>Cart</code>, <code>CartItem</code>, <code>OrderItem</code>, <code>OrderStatusHistory</code>, <code>RefreshToken</code>, <code>NotificationLog</code>, <code>IntegrationJob</code>, <code>AuditLog</code></p>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 4 · Arquitectura del Sistema</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 5 — BACKEND ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">05</td>
+      <td><div class="ch-tag">Capítulo 5</div><div class="ch-title">Backend — API REST</div></td>
+    </tr></table>
+  </div>
+
+  <h2>5.1 Módulos implementados</h2>
+  <table class="data-table">
+    <thead><tr><th>Módulo</th><th>Responsabilidad</th><th class="r">Endpoints</th><th>Estado</th></tr></thead>
+    <tbody>
+      <tr><td><code>auth</code></td><td>Login, logout, refresh token, perfil actual</td><td class="r">4</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr><td><code>users</code></td><td>CRUD de usuarios, gestión de roles y organizaciones</td><td class="r">5</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr><td><code>organizations</code></td><td>CRUD de distribuidoras y tiendas</td><td class="r">7</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr><td><code>catalog</code></td><td>Productos, precios, stock, filtros, upload de imágenes</td><td class="r">7</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr><td><code>cart</code></td><td>Carrito por usuario, items, vaciar carrito</td><td class="r">5</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr><td><code>orders</code></td><td>Ciclo de vida del pedido, historial de estados</td><td class="r">5</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr><td><code>incidents</code></td><td>Incidencias posventa, resolución y cierre</td><td class="r">4</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr><td><code>integrations</code></td><td>Import/export CSV, historial de jobs</td><td class="r">5</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr><td><code>reporting</code></td><td>Dashboard KPIs, métricas, analytics por período</td><td class="r">3</td><td><span class="b bg">✓ Completo</span></td></tr>
+      <tr class="total-row"><td><strong>TOTAL</strong></td><td></td><td class="r"><strong>44</strong></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.2 Autenticación y control de acceso (RBAC)</h2>
+  <p>El sistema implementa autenticación <em>stateless</em> mediante JWT con un <em>access token</em> de 15 minutos y un <em>refresh token</em> almacenado en BD con caducidad de 7 días.</p>
+  <table class="data-table">
+    <thead><tr><th>Rol</th><th>Portal Tienda</th><th>Backoffice</th><th>Gestión de usuarios</th></tr></thead>
+    <tbody>
+      <tr><td><span class="b br">ADMIN</span></td><td>Acceso total</td><td>Acceso total</td><td>CRUD completo</td></tr>
+      <tr><td><span class="b bb">OPERATIONS</span></td><td>Solo lectura</td><td>Pedidos e incidencias</td><td>Sin acceso</td></tr>
+      <tr><td><span class="b bm">DISTRIBUTOR</span></td><td>Sin acceso</td><td>Sus productos y pedidos</td><td>Sin acceso</td></tr>
+      <tr><td><span class="b bg">STORE</span></td><td>Compra y pedidos propios</td><td>Sin acceso</td><td>Sin acceso</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.3 Catálogo de endpoints principales</h2>
+  <table class="data-table">
+    <thead><tr><th>Método</th><th>Ruta</th><th>Descripción</th><th>Roles</th></tr></thead>
+    <tbody>
+      <tr><td><span class="b bg">POST</span></td><td><code>/api/auth/login</code></td><td>Autenticación con email/password</td><td>Público</td></tr>
+      <tr><td><span class="b bb">GET</span></td><td><code>/api/products</code></td><td>Listado paginado con filtros</td><td>JWT</td></tr>
+      <tr><td><span class="b bg">POST</span></td><td><code>/api/cart/items</code></td><td>Añadir producto al carrito</td><td>JWT</td></tr>
+      <tr><td><span class="b bg">POST</span></td><td><code>/api/orders</code></td><td>Crear pedido desde el carrito</td><td>STORE</td></tr>
+      <tr><td><span class="b by">PATCH</span></td><td><code>/api/orders/:id/status</code></td><td>Cambiar estado del pedido</td><td>ADMIN, OPS, DIST</td></tr>
+      <tr><td><span class="b bg">POST</span></td><td><code>/api/incidents</code></td><td>Crear incidencia sobre un pedido</td><td>STORE, OPS</td></tr>
+      <tr><td><span class="b bb">GET</span></td><td><code>/api/reports/dashboard</code></td><td>KPIs y métricas del mes</td><td>ADMIN, OPS</td></tr>
+      <tr><td><span class="b bg">POST</span></td><td><code>/api/integrations/catalog/import</code></td><td>Importar productos desde CSV</td><td>ADMIN</td></tr>
+      <tr><td><span class="b bb">GET</span></td><td><code>/api/integrations/orders/export</code></td><td>Exportar pedidos a CSV</td><td>ADMIN, OPS</td></tr>
+    </tbody>
+  </table>
+
+  <h2>5.4 Flujo del ciclo de vida de un pedido</h2>
+  <div class="flow-box">
+    <span class="b bgr">DRAFT</span> → <span class="b bb">SUBMITTED</span> → <span class="b bb">CONFIRMED</span> → <span class="b by">PREPARING</span> → <span class="b bgr">SHIPPED</span> → <span class="b bg">DELIVERED</span>
+    <br><br>
+    <span style="color:#64748b;font-size:8.5pt;">Desde cualquier estado activo → </span><span class="b br">CANCELLED</span>
+    &nbsp;&nbsp;<span style="color:#64748b;font-size:8.5pt;">Desde SHIPPED/DELIVERED → </span><span class="b bo">INCIDENT_REPORTED</span>
+  </div>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 5 · Backend — API REST</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 6 — FRONTEND ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">06</td>
+      <td><div class="ch-tag">Capítulo 6</div><div class="ch-title">Frontend — Interfaz de Usuario</div></td>
+    </tr></table>
+  </div>
+
+  <p>El frontend está construido con <strong>Next.js 14</strong> usando App Router y organizado en dos secciones con layouts independientes: el <em>Portal B2B</em> para las tiendas y el <em>Backoffice</em> para administración.</p>
+
+  <h2>6.1 Portal B2B (rol STORE)</h2>
+  <table class="data-table">
+    <thead><tr><th>Página</th><th>Ruta</th><th>Funcionalidades implementadas</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Login</strong></td><td><code>/login</code></td><td>Formulario validado, manejo de errores, redirección por rol</td></tr>
+      <tr><td><strong>Catálogo</strong></td><td><code>/catalog</code></td><td>Grid de productos, búsqueda en tiempo real, paginación, añadir carrito, badge de descuento, estado de stock</td></tr>
+      <tr><td><strong>Carrito</strong></td><td><code>/cart</code></td><td>Lista de items, modificar cantidad, eliminar, subtotal/IVA/total, checkout</td></tr>
+      <tr><td><strong>Mis Pedidos</strong></td><td><code>/orders</code></td><td>Lista paginada, búsqueda por número, badges de estado, enlace al detalle</td></tr>
+      <tr><td><strong>Detalle Pedido</strong></td><td><code>/orders/[id]</code></td><td>Productos con imagen, dirección de envío, desglose de precios, timeline histórico, incidencias, número de seguimiento</td></tr>
+      <tr><td><strong>Incidencias</strong></td><td><code>/incidents</code></td><td>Listado filtrable, formulario de nueva incidencia, visualización de resolución</td></tr>
+      <tr><td><strong>Perfil</strong></td><td><code>/profile</code></td><td>Datos del usuario y organización asociada</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6.2 Backoffice (roles ADMIN / OPERATIONS)</h2>
+  <table class="data-table">
+    <thead><tr><th>Página</th><th>Ruta</th><th>Funcionalidades implementadas</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Dashboard</strong></td><td><code>/admin/dashboard</code></td><td>KPIs del mes, comparativa vs mes anterior, pedidos por estado, pedidos recientes</td></tr>
+      <tr><td><strong>Gestión Pedidos</strong></td><td><code>/admin/orders</code></td><td>Tabla paginada, filtro por estado, búsqueda, modal cambio de estado, número de seguimiento</td></tr>
+      <tr><td><strong>Gestión Catálogo</strong></td><td><code>/admin/products</code></td><td>CRUD de productos, filtro por categoría, upload de imagen (≤5 MB)</td></tr>
+      <tr><td><strong>Gestión Usuarios</strong></td><td><code>/admin/users</code></td><td>CRUD completo, asignación de rol y organización, activar/desactivar</td></tr>
+      <tr><td><strong>Organizaciones</strong></td><td><code>/admin/organizations</code></td><td>CRUD de distribuidoras y tiendas, datos fiscales (CIF/NIF)</td></tr>
+      <tr><td><strong>Incidencias</strong></td><td><code>/admin/incidents</code></td><td>Tabla completa, filtro por estado, modal de gestión con texto de resolución</td></tr>
+      <tr><td><strong>Integraciones</strong></td><td><code>/admin/integrations</code></td><td>Export CSV (productos, pedidos, usuarios, orgs), import CSV con drag&amp;drop, historial de jobs</td></tr>
+      <tr><td><strong>Reportes</strong></td><td><code>/admin/reports</code></td><td>Estadísticas por período (7d/30d/90d/1y), top productos, pedidos por estado, gráfico de ingresos</td></tr>
+    </tbody>
+  </table>
+
+  <h2>6.3 Decisiones técnicas destacadas</h2>
+  <table class="two-col-table">
+    <tr>
+      <td>
+        <h3>Gestión de estado</h3>
+        <p style="font-family:'Inter',sans-serif;font-size:9.5pt;"><strong>Zustand</strong> con middleware <code>persist</code> para la autenticación (tokens en localStorage). <strong>TanStack Query</strong> para caché de datos del servidor con invalidación automática tras mutaciones.</p>
+      </td>
+      <td>
+        <h3>Cliente HTTP</h3>
+        <p style="font-family:'Inter',sans-serif;font-size:9.5pt;">Wrapper personalizado sobre <code>fetch</code> que inyecta el <code>Bearer token</code> en cada petición y redirige a <code>/login</code> automáticamente al recibir un error 401.</p>
+      </td>
+    </tr>
+  </table>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 6 · Frontend</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 7 — GESTIÓN ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">07</td>
+      <td><div class="ch-tag">Capítulo 7</div><div class="ch-title">Gestión del Proyecto</div></td>
+    </tr></table>
+  </div>
+
+  <h2>7.1 Equipo y roles</h2>
+  <table class="data-table">
+    <thead><tr><th>Integrante</th><th>Rol principal</th><th>Responsabilidades</th></tr></thead>
+    <tbody>
+      <tr>
+        <td><strong>Alejandro Rodas</strong></td>
+        <td>Project Manager / Backend Lead</td>
+        <td>Coordinación del equipo, arquitectura de la API, módulos de auth y pedidos, despliegue Docker</td>
+      </tr>
+      <tr>
+        <td><strong>Miguel Ángel Sánchez</strong></td>
+        <td>Backend Developer</td>
+        <td>Módulos de catálogo, carrito e integraciones CSV; diseño y seed de la base de datos</td>
+      </tr>
+      <tr>
+        <td><strong>Alejandro Medina</strong></td>
+        <td>Frontend Lead</td>
+        <td>Portal B2B completo (tienda), sistema de componentes Radix UI, gestión de estado con Zustand</td>
+      </tr>
+      <tr>
+        <td><strong>Roberto Ruiz</strong></td>
+        <td>Frontend Developer / QA</td>
+        <td>Backoffice de administración, integración frontend-backend, testing del flujo completo, documentación</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>7.2 Comunicación y herramientas</h2>
+  <table class="two-col-table">
+    <tr>
+      <td>
+        <h3>Comunicación del equipo</h3>
+        <ul style="margin-left:18px;font-family:'Inter',sans-serif;font-size:9.5pt;line-height:2;">
+          <li><strong>Slack</strong> — canal <code>#cosmetic-pipeline</code></li>
+          <li><strong>Daily standup</strong> — lun, mié, vie · 15 min</li>
+          <li><strong>Demo semanal</strong> — viernes 17:00</li>
+          <li><strong>Reuniones presenciales</strong> — hitos críticos</li>
+        </ul>
+      </td>
+      <td>
+        <h3>Herramientas de desarrollo</h3>
+        <ul style="margin-left:18px;font-family:'Inter',sans-serif;font-size:9.5pt;line-height:2;">
+          <li><strong>GitHub</strong> — control de versiones y revisión de código</li>
+          <li><strong>VS Code</strong> — editor con ESLint/Prettier</li>
+          <li><strong>Postman / Swagger UI</strong> — pruebas de la API</li>
+          <li><strong>Prisma Studio</strong> — inspección de la BD</li>
+          <li><strong>Docker Desktop</strong> — entorno local</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <h2>7.3 Gestión de la desviación detectada</h2>
+  <p>En la Semana 9 se identificó que el backoffice acumulaba un retraso de aproximadamente una semana: las páginas de gestión CRUD resultaron ser más complejas de lo estimado (tablas paginadas, diálogos modales, formularios completos).</p>
+  <div class="ibox ibox-warn">
+    <p><strong>Decisión adoptada:</strong> Se incrementó la dedicación del equipo de frontend durante las semanas 9–10, absorbiendo el retraso sin ampliar la fecha de cierre ni el presupuesto. El margen de contingencia del 10% presupuestado fue suficiente para cubrir el coste adicional.</p>
+  </div>
+  <p>Gracias a esta medida, <strong>el proyecto se entregó completo en el plazo original del 2 de mayo de 2026</strong>.</p>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 7 · Gestión del Proyecto</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 8 — PRESUPUESTO ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">08</td>
+      <td><div class="ch-tag">Capítulo 8</div><div class="ch-title">Presupuesto y Costes</div></td>
+    </tr></table>
+  </div>
+
+  <h2>8.1 Resumen presupuestario final</h2>
+  <table class="kpi-table">
+    <tr>
+      <td class="kpi-cell top-green"><div class="kpi-lbl">Presupuesto inicial aprobado</div><div class="kpi-val">6.520€</div><div class="kpi-sub">Aprobado en acta de inicio</div></td>
+      <td class="kpi-cell top-green"><div class="kpi-lbl">Coste final real</div><div class="kpi-val">5.980€</div><div class="kpi-sub">91,7% del presupuesto</div></td>
+      <td class="kpi-cell top-blue"><div class="kpi-lbl">Ahorro final</div><div class="kpi-val">540€</div><div class="kpi-sub">Contingencia no utilizada</div></td>
+    </tr>
+  </table>
+
+  <h2>8.2 Desglose por concepto</h2>
+  <table class="data-table">
+    <thead><tr><th>Concepto</th><th class="r">Presupuesto</th><th class="r">Coste real</th><th class="r">Desviación</th><th class="r">%</th></tr></thead>
+    <tbody>
+      <tr><td>Alcance base (Portal + Backoffice)</td><td class="r">3.500€</td><td class="r">3.500€</td><td class="r">0€</td><td class="r">100%</td></tr>
+      <tr><td>Integración CSV (distribuidora)</td><td class="r">1.000€</td><td class="r">950€</td><td class="r">−50€</td><td class="r">95%</td></tr>
+      <tr><td>Reporting y notificaciones</td><td class="r">400€</td><td class="r">380€</td><td class="r">−20€</td><td class="r">95%</td></tr>
+      <tr><td>Infraestructura (Docker, entornos)</td><td class="r">300€</td><td class="r">290€</td><td class="r">−10€</td><td class="r">97%</td></tr>
+      <tr><td>Formación y documentación cliente</td><td class="r">400€</td><td class="r">340€</td><td class="r">−60€</td><td class="r">85%</td></tr>
+      <tr><td>Transporte y reuniones</td><td class="r">250€</td><td class="r">230€</td><td class="r">−20€</td><td class="r">92%</td></tr>
+      <tr><td>Comida y logística</td><td class="r">150€</td><td class="r">140€</td><td class="r">−10€</td><td class="r">93%</td></tr>
+      <tr><td>Contingencia (10%)</td><td class="r">520€</td><td class="r">150€</td><td class="r">−370€</td><td class="r">29%</td></tr>
+      <tr class="total-row"><td><strong>TOTAL</strong></td><td class="r"><strong>6.520€</strong></td><td class="r"><strong>5.980€</strong></td><td class="r"><strong>−540€</strong></td><td class="r"><strong>91,7%</strong></td></tr>
+    </tbody>
+  </table>
+
+  <h2>8.3 Horas por área</h2>
+  <table class="data-table">
+    <thead><tr><th>Área</th><th class="r">Estimadas</th><th class="r">Consumidas</th><th class="r">Ahorro</th><th>Ejecución</th></tr></thead>
+    <tbody>
+      <tr><td>Desarrollo backend</td><td class="r">160h</td><td class="r">158h</td><td class="r">2h</td><td><span class="b bg">99%</span></td></tr>
+      <tr><td>Desarrollo frontend</td><td class="r">160h</td><td class="r">158h</td><td class="r">2h</td><td><span class="b bg">99%</span></td></tr>
+      <tr><td>Diseño UX / componentes</td><td class="r">40h</td><td class="r">38h</td><td class="r">2h</td><td><span class="b bg">95%</span></td></tr>
+      <tr><td>QA y testing</td><td class="r">32h</td><td class="r">30h</td><td class="r">2h</td><td><span class="b bg">94%</span></td></tr>
+      <tr><td>Documentación</td><td class="r">16h</td><td class="r">14h</td><td class="r">2h</td><td><span class="b by">88%</span></td></tr>
+      <tr class="total-row"><td><strong>TOTAL</strong></td><td class="r"><strong>408h</strong></td><td class="r"><strong>398h</strong></td><td class="r"><strong>10h</strong></td><td><span class="b bg">97,5%</span></td></tr>
+    </tbody>
+  </table>
+
+  <h2>8.4 Ejecución presupuestaria por área</h2>
+  <div class="prog-wrap"><div class="prog-header">Backend · 158h<span class="prog-right">99%</span></div><div class="prog-track"><div class="prog-fill pf-green" style="width:99%;"></div></div></div>
+  <div class="prog-wrap"><div class="prog-header">Frontend · 158h<span class="prog-right">99%</span></div><div class="prog-track"><div class="prog-fill pf-green" style="width:99%;"></div></div></div>
+  <div class="prog-wrap"><div class="prog-header">Diseño UX · 38h<span class="prog-right">95%</span></div><div class="prog-track"><div class="prog-fill pf-blue" style="width:95%;"></div></div></div>
+  <div class="prog-wrap"><div class="prog-header">QA y Testing · 30h<span class="prog-right">94%</span></div><div class="prog-track"><div class="prog-fill pf-blue" style="width:94%;"></div></div></div>
+  <div class="prog-wrap"><div class="prog-header">Documentación · 14h<span class="prog-right">88%</span></div><div class="prog-track"><div class="prog-fill pf-orange" style="width:88%;"></div></div></div>
+
+  <div class="ibox ibox-success" style="margin-top:16px;">
+    <p><strong>Conclusión presupuestaria:</strong> El proyecto finalizó con un ahorro de <strong>540€</strong> respecto al presupuesto aprobado (91,7% ejecutado), principalmente por la baja utilización de la partida de contingencia. El proyecto se completó dentro del presupuesto y en el plazo original.</p>
+  </div>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 8 · Presupuesto y Costes</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 9 — RIESGOS ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">09</td>
+      <td><div class="ch-tag">Capítulo 9</div><div class="ch-title">Análisis de Riesgos</div></td>
+    </tr></table>
+  </div>
+
+  <h2>9.1 Registro de riesgos</h2>
+  <table class="data-table">
+    <thead><tr><th>Riesgo identificado</th><th>Prob.</th><th>Impacto</th><th>Mitigación</th><th>Estado final</th></tr></thead>
+    <tbody>
+      <tr>
+        <td>Subestimación de páginas CRUD del backoffice</td>
+        <td><span class="b by">Media</span></td>
+        <td><span class="b br">Alto</span></td>
+        <td>Incrementar dedicación frontend; priorizar páginas de mayor valor</td>
+        <td><span class="b bg">✓ Mitigado</span></td>
+      </tr>
+      <tr>
+        <td>Incompatibilidad módulos nativos Node.js en Windows/WSL2 (bcrypt)</td>
+        <td><span class="b by">Media</span></td>
+        <td><span class="b by">Medio</span></td>
+        <td>Documentar troubleshooting; reinstalar node_modules desde Windows</td>
+        <td><span class="b bg">✓ Resuelto</span></td>
+      </tr>
+      <tr>
+        <td>Desincronización del cliente Prisma tras cambios en el esquema</td>
+        <td><span class="b bg">Baja</span></td>
+        <td><span class="b by">Medio</span></td>
+        <td>Procedimiento estándar: <code>prisma generate</code> + <code>db push</code></td>
+        <td><span class="b bg">✓ Resuelto</span></td>
+      </tr>
+      <tr>
+        <td>Falta de tiempo para QA completo del flujo E2E</td>
+        <td><span class="b by">Media</span></td>
+        <td><span class="b by">Medio</span></td>
+        <td>Foco en testing manual del flujo crítico: login → catálogo → carrito → pedido</td>
+        <td><span class="b bg">✓ Resuelto</span></td>
+      </tr>
+      <tr>
+        <td>Pérdida de datos de demo al reiniciar el entorno</td>
+        <td><span class="b bg">Baja</span></td>
+        <td><span class="b by">Medio</span></td>
+        <td>Script de seed reproducible con <code>npx ts-node prisma/seed.ts</code></td>
+        <td><span class="b bg">✓ Resuelto</span></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h2>9.2 Lecciones aprendidas en gestión de riesgos</h2>
+  <table class="two-col-table">
+    <tr>
+      <td>
+        <div class="ibox ibox-warn">
+          <p><strong>Estimación de páginas CRUD:</strong> Las páginas de gestión con tablas, modales, filtros y operaciones CRUD completas requieren aproximadamente el doble de tiempo que una página de solo lectura. En proyectos futuros se deberá aplicar un factor ×2 a estas páginas durante la estimación.</p>
+        </div>
+      </td>
+      <td>
+        <div class="ibox ibox-success">
+          <p><strong>Valor del monorepo:</strong> La arquitectura monorepo con Turborepo facilitó la sincronización entre equipos de frontend y backend, evitando problemas de versiones y permitiendo compartir tipos TypeScript entre las dos aplicaciones.</p>
+        </div>
+      </td>
+    </tr>
+  </table>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 9 · Análisis de Riesgos</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ CAP 10 — CONCLUSIONES ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">10</td>
+      <td><div class="ch-tag">Capítulo 10</div><div class="ch-title">Conclusiones y Lecciones Aprendidas</div></td>
+    </tr></table>
+  </div>
+
+  <h2>10.1 Consecución de objetivos</h2>
+  <p>El proyecto <strong>Cosmetic Pipeline</strong> ha alcanzado todos los objetivos definidos en el acta de inicio. Se ha entregado una plataforma B2B completamente funcional que digitaliza el proceso de pedidos entre distribuidoras y tiendas del sector cosmético.</p>
+  <ul class="checklist">
+    <li>Portal de compra self-service con flujo completo (catálogo → carrito → pedido → seguimiento)</li>
+    <li>Backoffice de administración con gestión integral (pedidos, catálogo, usuarios, organizaciones, incidencias)</li>
+    <li>Sistema de incidencias posventa con ciclo de vida completo (apertura → resolución → cierre)</li>
+    <li>Dashboard con KPIs en tiempo real y reportes analíticos configurables por período</li>
+    <li>Integración CSV para importar/exportar catálogo, stock y pedidos</li>
+    <li>Autenticación segura con JWT y control de acceso por rol (RBAC, 4 roles)</li>
+    <li>Documentación completa: README técnico, Swagger API y esta memoria del proyecto</li>
+  </ul>
+
+  <h2>10.2 Valoración técnica</h2>
+  <table class="two-col-table">
+    <tr>
+      <td>
+        <h3>Aciertos tecnológicos</h3>
+        <ul style="margin-left:18px;font-family:'Inter',sans-serif;font-size:9.5pt;line-height:2;">
+          <li>La arquitectura modular de <strong>NestJS</strong> mantuvo el backend organizado y escalable</li>
+          <li><strong>Prisma ORM</strong> aceleró el desarrollo con tipado automático de consultas</li>
+          <li><strong>TanStack Query</strong> eliminó el boilerplate de gestión de estado del servidor</li>
+          <li><strong>Turborepo</strong> permitió desarrollar frontend y backend en paralelo con excelente DX</li>
+        </ul>
+      </td>
+      <td>
+        <h3>Áreas de mejora</h3>
+        <ul style="margin-left:18px;font-family:'Inter',sans-serif;font-size:9.5pt;line-height:2;">
+          <li>Implementar <strong>tests automatizados</strong> (unitarios e integración)</li>
+          <li>Añadir <strong>refresh proactivo del token</strong> antes de que expire</li>
+          <li>Mejorar la <strong>gestión de errores</strong> con mensajes más descriptivos</li>
+          <li>Añadir <strong>paginación infinita</strong> al catálogo para mejor UX en móvil</li>
+        </ul>
+      </td>
+    </tr>
+  </table>
+
+  <h2>10.3 Competencias desarrolladas</h2>
+  <table class="data-table">
+    <thead><tr><th>Área</th><th>Competencias adquiridas</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Arquitectura de software</strong></td><td>Diseño de APIs REST, separación de capas, patrones de repositorio, módulos NestJS</td></tr>
+      <tr><td><strong>Desarrollo full-stack</strong></td><td>Integración real frontend-backend con autenticación, estado global y caché de servidor</td></tr>
+      <tr><td><strong>Gestión de proyectos</strong></td><td>Metodología ágil, control de versiones en equipo, gestión de riesgos y desviaciones</td></tr>
+      <tr><td><strong>Infraestructura</strong></td><td>Contenedores Docker, monorepos, variables de entorno, configuración de CORS</td></tr>
+    </tbody>
+  </table>
+
+  <h2>10.4 Trabajo futuro</h2>
+  <ul style="margin-left:22px;font-family:'Inter',sans-serif;font-size:9.5pt;line-height:2.1;">
+    <li>Integración con pasarela de pago real (Stripe / Redsys)</li>
+    <li>Aplicación móvil progresiva (PWA) para comerciales de las tiendas</li>
+    <li>Notificaciones en tiempo real mediante WebSockets</li>
+    <li>Despliegue en la nube (AWS / GCP) con pipeline CI/CD automatizado</li>
+    <li>Panel de analytics avanzado con gráficos interactivos</li>
+  </ul>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Cap. 10 · Conclusiones</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+
+<!-- ══════════════ ANEXO A ══════════════ -->
+<div class="page">
+<div class="content-wrap">
+  <div class="chapter-row">
+    <table><tr>
+      <td class="ch-num">A</td>
+      <td><div class="ch-tag">Anexo A</div><div class="ch-title">Guía de Instalación y Arranque</div></td>
+    </tr></table>
+  </div>
+
+  <h2>A.1 Requisitos del sistema</h2>
+  <table class="data-table">
+    <thead><tr><th>Software</th><th>Versión mínima</th><th>Notas</th></tr></thead>
+    <tbody>
+      <tr><td>Node.js</td><td>≥ 20.0.0</td><td>Versión LTS recomendada</td></tr>
+      <tr><td>npm</td><td>≥ 10.0.0</td><td>Incluido con Node.js</td></tr>
+      <tr><td>Docker Desktop</td><td>Última versión estable</td><td>Necesario para PostgreSQL en local</td></tr>
+      <tr><td>Sistema operativo</td><td>Windows 10/11 o Linux/macOS</td><td>Desarrollado en Windows 11 + WSL2</td></tr>
+    </tbody>
+  </table>
+
+  <h2>A.2 Instalación desde cero</h2>
+  <div class="code-block">
+    <span class="code-comment"># 1. Clonar el repositorio</span><br>
+    git clone &lt;url-repositorio&gt; cosmetic-pipeline<br>
+    cd cosmetic-pipeline<br><br>
+    <span class="code-comment"># 2. Instalar dependencias del monorepo</span><br>
+    npm install<br><br>
+    <span class="code-comment"># 3. Levantar PostgreSQL con Docker</span><br>
+    docker-compose -f docker-compose.dev.yml up -d<br><br>
+    <span class="code-comment"># 4. Configurar y poblar la base de datos</span><br>
+    cd apps/api<br>
+    npx prisma generate<br>
+    npx prisma db push<br>
+    npx ts-node prisma/seed.ts<br><br>
+    <span class="code-comment"># 5. Iniciar la aplicación completa</span><br>
+    cd ../..<br>
+    npm run dev
+  </div>
+
+  <h2>A.3 URLs de acceso</h2>
+  <table class="data-table">
+    <thead><tr><th>Servicio</th><th>URL</th><th>Descripción</th></tr></thead>
+    <tbody>
+      <tr><td>Frontend</td><td><code>http://localhost:3000</code></td><td>Aplicación web completa</td></tr>
+      <tr><td>Backend API</td><td><code>http://localhost:3001</code></td><td>API REST</td></tr>
+      <tr><td>Swagger UI</td><td><code>http://localhost:3001/api/docs</code></td><td>Documentación interactiva de la API</td></tr>
+      <tr><td>Mailhog</td><td><code>http://localhost:8025</code></td><td>Bandeja de entrada de emails de desarrollo</td></tr>
+    </tbody>
+  </table>
+
+  <h2>A.4 Usuarios de demo</h2>
+  <table class="data-table">
+    <thead><tr><th>Email</th><th>Contraseña</th><th>Rol</th><th>Acceso</th></tr></thead>
+    <tbody>
+      <tr><td><code>admin@cosmetic-pipeline.com</code></td><td><code>Admin123!</code></td><td><span class="b br">ADMIN</span></td><td>Backoffice completo</td></tr>
+      <tr><td><code>operaciones@cosmeticpro.es</code></td><td><code>Admin123!</code></td><td><span class="b bb">OPERATIONS</span></td><td>Gestión operativa</td></tr>
+      <tr><td><code>tienda1@beautystore.es</code></td><td><code>Admin123!</code></td><td><span class="b bg">STORE</span></td><td>Portal de compras</td></tr>
+      <tr><td><code>tienda2@farmaciacentral.es</code></td><td><code>Admin123!</code></td><td><span class="b bg">STORE</span></td><td>Portal de compras</td></tr>
+    </tbody>
+  </table>
+
+  <h2>A.5 Solución de problemas frecuentes</h2>
+  <table class="data-table">
+    <thead><tr><th>Error</th><th>Causa</th><th>Solución</th></tr></thead>
+    <tbody>
+      <tr><td><code>bcrypt is not a valid Win32 application</code></td><td>node_modules compilados en WSL, no en Windows</td><td>Borrar <code>node_modules</code> y reinstalar desde PowerShell de Windows</td></tr>
+      <tr><td><code>@prisma/client has no exported member</code></td><td>Cliente Prisma desactualizado tras cambio de schema</td><td>Ejecutar <code>npx prisma generate</code> desde <code>apps/api</code></td></tr>
+      <tr><td><code>ECONNREFUSED localhost:5432</code></td><td>Docker Desktop no está ejecutándose</td><td>Iniciar Docker Desktop y ejecutar <code>docker-compose up -d</code></td></tr>
+      <tr><td>Frontend no conecta con backend</td><td>Variable de entorno no configurada</td><td>Verificar <code>apps/web/.env.local</code> con <code>NEXT_PUBLIC_API_URL=http://localhost:3001/api</code></td></tr>
+    </tbody>
+  </table>
+
+  <div class="page-foot"><table><tr><td>Cosmetic Pipeline — Memoria Final</td><td class="center">Anexo A · Guía de Instalación</td><td class="right">Universidad Europea de Madrid · 2026</td></tr></table></div>
+</div>
+</div>
+
+</body>
+</html>
