@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { apiClient } from '@/lib/api-client';
 import { formatDate } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -18,10 +18,7 @@ import {
   Upload,
   Download,
   FileSpreadsheet,
-  Package,
   ShoppingCart,
-  Users,
-  Building2,
   CheckCircle2,
   XCircle,
   Clock,
@@ -29,89 +26,102 @@ import {
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface ImportLog {
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+
+interface IntegrationJob {
   id: string;
   type: string;
-  fileName: string;
+  fileName: string | null;
   status: string;
-  totalRows: number;
-  successRows: number;
-  errorRows: number;
-  errors: string[] | null;
+  recordsProcessed: number;
+  recordsFailed: number;
+  errorLog: string | null;
   createdAt: string;
-  createdBy: { firstName: string; lastName: string };
 }
 
-const exportTypes = [
-  { value: 'products', label: 'Productos', icon: Package },
-  { value: 'orders', label: 'Pedidos', icon: ShoppingCart },
-  { value: 'users', label: 'Usuarios', icon: Users },
-  { value: 'organizations', label: 'Organizaciones', icon: Building2 },
-];
+interface JobsResponse {
+  data: IntegrationJob[];
+  meta: { total: number; page: number; limit: number; totalPages: number };
+}
 
 const importTypes = [
-  { value: 'products', label: 'Productos', description: 'Importar o actualizar productos desde CSV' },
-  { value: 'stock', label: 'Stock', description: 'Actualizar niveles de stock' },
-  { value: 'prices', label: 'Precios', description: 'Actualizar precios de productos' },
+  { value: 'catalog', label: 'Catálogo', description: 'Importar o actualizar productos desde CSV', endpoint: '/integrations/catalog/import' },
+  { value: 'stock',   label: 'Stock',    description: 'Actualizar niveles de stock',              endpoint: '/integrations/stock/import' },
 ];
 
 const statusColors: Record<string, string> = {
-  PENDING: 'bg-yellow-100 text-yellow-800',
-  PROCESSING: 'bg-blue-100 text-blue-800',
+  PENDING:   'bg-yellow-100 text-yellow-800',
+  RUNNING:   'bg-blue-100 text-blue-800',
   COMPLETED: 'bg-green-100 text-green-800',
-  FAILED: 'bg-red-100 text-red-800',
+  FAILED:    'bg-red-100 text-red-800',
 };
 
 const statusLabels: Record<string, string> = {
-  PENDING: 'Pendiente',
-  PROCESSING: 'Procesando',
+  PENDING:   'Pendiente',
+  RUNNING:   'Procesando',
   COMPLETED: 'Completado',
-  FAILED: 'Error',
+  FAILED:    'Error',
+};
+
+const typeLabels: Record<string, string> = {
+  CATALOG_IMPORT: 'Importar catálogo',
+  STOCK_IMPORT:   'Importar stock',
+  ORDER_EXPORT:   'Exportar pedidos',
 };
 
 export default function IntegrationsPage() {
-  const [selectedExportType, setSelectedExportType] = useState('products');
-  const [selectedImportType, setSelectedImportType] = useState('products');
-  const [isUploading, setIsUploading] = useState(false);
+  const [selectedImportType, setSelectedImportType] = useState('catalog');
+  const [isUploading, setIsUploading]               = useState(false);
+  const [isExporting, setIsExporting]               = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const { toast } = useToast();
+  const { toast }       = useToast();
+  const queryClient     = useQueryClient();
 
-  const { data: importLogs, refetch: refetchLogs } = useQuery<ImportLog[]>({
-    queryKey: ['import-logs'],
-    queryFn: () => apiClient.get('/integrations/logs'),
+  const { data: jobsData, refetch: refetchJobs } = useQuery<JobsResponse>({
+    queryKey: ['integration-jobs'],
+    queryFn:  () => apiClient.get('/integrations/jobs'),
   });
 
-  const exportMutation = useMutation({
-    mutationFn: async (type: string) => {
-      const response = await apiClient.get<Blob>(`/integrations/export/${type}`);
-      return { blob: response, type };
-    },
-    onSuccess: ({ blob, type }) => {
-      const url = window.URL.createObjectURL(new Blob([blob]));
+  const handleExport = async () => {
+    setIsExporting(true);
+    try {
+      const token = localStorage.getItem('accessToken');
+      const response = await fetch(`${API_URL}/integrations/orders/export`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) throw new Error('Error al exportar');
+
+      const blob = await response.blob();
+      const url  = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${type}_${new Date().toISOString().split('T')[0]}.csv`);
+      link.href  = url;
+      link.setAttribute('download', `pedidos_${new Date().toISOString().split('T')[0]}.csv`);
       document.body.appendChild(link);
       link.click();
       link.remove();
-      toast({ title: 'Exportación completada', description: 'El archivo CSV ha sido descargado' });
-    },
-    onError: (error: Error) => {
-      toast({ title: 'Error', description: error.message, variant: 'destructive' });
-    },
-  });
+      window.URL.revokeObjectURL(url);
+
+      toast({ title: 'Exportación completada', description: 'El CSV de pedidos ha sido descargado' });
+      refetchJobs();
+    } catch (error) {
+      toast({ title: 'Error', description: (error as Error).message, variant: 'destructive' });
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setIsUploading(true);
-
     try {
-      await apiClient.uploadFile(`/integrations/import?type=${selectedImportType}`, file);
-      toast({ title: 'Importación iniciada', description: 'El archivo está siendo procesado' });
-      refetchLogs();
+      const selected = importTypes.find((t) => t.value === selectedImportType)!;
+      await apiClient.uploadFile(selected.endpoint, file);
+      toast({ title: 'Importación completada', description: 'El archivo ha sido procesado' });
+      queryClient.invalidateQueries({ queryKey: ['integration-jobs'] });
     } catch (error) {
       toast({ title: 'Error', description: (error as Error).message, variant: 'destructive' });
     } finally {
@@ -121,23 +131,15 @@ export default function IntegrationsPage() {
   };
 
   const downloadTemplate = (type: string) => {
-    let headers = '';
-    switch (type) {
-      case 'products':
-        headers = 'sku,name,description,price,stock,minStock,categoryId,brandId';
-        break;
-      case 'stock':
-        headers = 'sku,stock';
-        break;
-      case 'prices':
-        headers = 'sku,price';
-        break;
-    }
+    const headers =
+      type === 'catalog'
+        ? 'sku,ean,name,description,brand,category,subcategory,imageUrl'
+        : 'sku,quantity';
     const blob = new Blob([headers], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
+    const url  = window.URL.createObjectURL(blob);
     const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `template_${type}.csv`);
+    link.href  = url;
+    link.setAttribute('download', `plantilla_${type}.csv`);
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -151,7 +153,7 @@ export default function IntegrationsPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Export Section */}
+        {/* Export */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -161,30 +163,25 @@ export default function IntegrationsPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Descarga los datos del sistema en formato CSV
+              Descarga los pedidos del sistema en formato CSV
             </p>
-
-            <div className="grid grid-cols-2 gap-3">
-              {exportTypes.map((type) => {
-                const Icon = type.icon;
-                return (
-                  <Button
-                    key={type.value}
-                    variant="outline"
-                    className="h-auto py-4 flex flex-col items-center gap-2"
-                    onClick={() => exportMutation.mutate(type.value)}
-                    disabled={exportMutation.isPending}
-                  >
-                    <Icon className="h-6 w-6" />
-                    <span>{type.label}</span>
-                  </Button>
-                );
-              })}
-            </div>
+            <Button
+              variant="outline"
+              className="w-full h-auto py-6 flex flex-col items-center gap-2"
+              onClick={handleExport}
+              disabled={isExporting}
+            >
+              {isExporting ? (
+                <RefreshCw className="h-6 w-6 animate-spin" />
+              ) : (
+                <ShoppingCart className="h-6 w-6" />
+              )}
+              <span>{isExporting ? 'Exportando...' : 'Exportar Pedidos'}</span>
+            </Button>
           </CardContent>
         </Card>
 
-        {/* Import Section */}
+        {/* Import */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -215,7 +212,7 @@ export default function IntegrationsPage() {
             <div className="border-2 border-dashed rounded-lg p-6 text-center">
               <FileSpreadsheet className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
               <p className="text-sm text-muted-foreground mb-3">
-                Arrastra un archivo CSV o haz clic para seleccionar
+                Selecciona un archivo CSV para importar
               </p>
               <input
                 ref={fileInputRef}
@@ -225,28 +222,14 @@ export default function IntegrationsPage() {
                 className="hidden"
               />
               <div className="flex gap-2 justify-center">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => downloadTemplate(selectedImportType)}
-                >
+                <Button variant="outline" size="sm" onClick={() => downloadTemplate(selectedImportType)}>
                   Descargar plantilla
                 </Button>
-                <Button
-                  size="sm"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={isUploading}
-                >
+                <Button size="sm" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
                   {isUploading ? (
-                    <>
-                      <RefreshCw className="h-4 w-4 mr-2 animate-spin" />
-                      Subiendo...
-                    </>
+                    <><RefreshCw className="h-4 w-4 mr-2 animate-spin" />Subiendo...</>
                   ) : (
-                    <>
-                      <Upload className="h-4 w-4 mr-2" />
-                      Seleccionar archivo
-                    </>
+                    <><Upload className="h-4 w-4 mr-2" />Seleccionar archivo</>
                   )}
                 </Button>
               </div>
@@ -255,65 +238,64 @@ export default function IntegrationsPage() {
         </Card>
       </div>
 
-      {/* Import History */}
+      {/* History */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center justify-between">
-            <span>Historial de Importaciones</span>
-            <Button variant="ghost" size="sm" onClick={() => refetchLogs()}>
+            <span>Historial de Jobs</span>
+            <Button variant="ghost" size="sm" onClick={() => refetchJobs()}>
               <RefreshCw className="h-4 w-4" />
             </Button>
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {!importLogs || importLogs.length === 0 ? (
+          {!jobsData?.data.length ? (
             <div className="text-center py-8 text-muted-foreground">
               <FileSpreadsheet className="h-12 w-12 mx-auto mb-3 opacity-50" />
-              <p>No hay importaciones registradas</p>
+              <p>No hay operaciones registradas</p>
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-muted/50 border-b">
                   <tr>
-                    <th className="text-left p-3 font-medium">Archivo</th>
                     <th className="text-left p-3 font-medium">Tipo</th>
+                    <th className="text-left p-3 font-medium">Archivo</th>
                     <th className="text-left p-3 font-medium">Estado</th>
                     <th className="text-left p-3 font-medium">Resultados</th>
-                    <th className="text-left p-3 font-medium">Usuario</th>
                     <th className="text-left p-3 font-medium">Fecha</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {importLogs.map((log) => (
-                    <tr key={log.id} className="hover:bg-muted/30">
-                      <td className="p-3">
-                        <span className="font-mono text-sm">{log.fileName}</span>
+                  {jobsData.data.map((job) => (
+                    <tr key={job.id} className="hover:bg-muted/30">
+                      <td className="p-3 text-sm font-medium">
+                        {typeLabels[job.type] ?? job.type}
                       </td>
-                      <td className="p-3 capitalize">{log.type}</td>
                       <td className="p-3">
-                        <span className={cn('inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium', statusColors[log.status])}>
-                          {log.status === 'COMPLETED' && <CheckCircle2 className="h-3 w-3" />}
-                          {log.status === 'FAILED' && <XCircle className="h-3 w-3" />}
-                          {log.status === 'PROCESSING' && <RefreshCw className="h-3 w-3 animate-spin" />}
-                          {log.status === 'PENDING' && <Clock className="h-3 w-3" />}
-                          {statusLabels[log.status]}
+                        <span className="font-mono text-sm text-muted-foreground">
+                          {job.fileName ?? '—'}
+                        </span>
+                      </td>
+                      <td className="p-3">
+                        <span className={cn('inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full font-medium', statusColors[job.status])}>
+                          {job.status === 'COMPLETED' && <CheckCircle2 className="h-3 w-3" />}
+                          {job.status === 'FAILED'    && <XCircle className="h-3 w-3" />}
+                          {job.status === 'RUNNING'   && <RefreshCw className="h-3 w-3 animate-spin" />}
+                          {job.status === 'PENDING'   && <Clock className="h-3 w-3" />}
+                          {statusLabels[job.status] ?? job.status}
                         </span>
                       </td>
                       <td className="p-3">
                         <div className="text-sm">
-                          <span className="text-green-600">{log.successRows} OK</span>
-                          {log.errorRows > 0 && (
-                            <span className="text-red-600 ml-2">{log.errorRows} errores</span>
+                          <span className="text-green-600">{job.recordsProcessed} OK</span>
+                          {job.recordsFailed > 0 && (
+                            <span className="text-red-600 ml-2">{job.recordsFailed} errores</span>
                           )}
-                          <span className="text-muted-foreground ml-2">/ {log.totalRows} total</span>
                         </div>
                       </td>
                       <td className="p-3 text-sm text-muted-foreground">
-                        {log.createdBy.firstName} {log.createdBy.lastName}
-                      </td>
-                      <td className="p-3 text-sm text-muted-foreground">
-                        {formatDate(log.createdAt)}
+                        {formatDate(job.createdAt)}
                       </td>
                     </tr>
                   ))}
