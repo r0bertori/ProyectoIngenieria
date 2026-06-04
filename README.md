@@ -6,8 +6,6 @@ Plataforma B2B para gestión de pedidos de cosmética entre distribuidoras y tie
 
 ---
 
-## PARA CLAUDE (IA)
-
 > **Contexto importante**: Este es un proyecto de universidad completamente implementado. Tanto el backend como el frontend están operativos al 100%.
 
 ### Estado actual (Junio 2026)
